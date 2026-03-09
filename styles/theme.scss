@@ -1,0 +1,58 @@
+@use 'sass:map';
+@use 'sass:color';
+@use 'sass:meta';
+
+$defaultTheme: (
+  light: (
+    link-color: rgb(0, 0, 130),
+    link-hover-color: rgb(0, 0, 69),
+    color: #111111,
+    background: #eeeeee,
+    active-color: #0006c1,
+    em-bg-color: #ffdbca,
+    strong-color: #868600,
+    name: 'light',
+  ),
+  dark: (
+    link-color: rgb(90, 90, 255),
+    link-hover-color: rgb(146, 146, 255),
+    color: #eeeeee,
+    background: #1e1e1e,
+    active-color: #686dff,
+    em-bg-color: #131600,
+    strong-color: #dddd00,
+    name: 'dark',
+  ),
+);
+
+$curTheme: 'light';
+@mixin use($themeConfig: $defaultTheme) {
+  @each $key, $value in $themeConfig {
+    $curTheme: $key !global;
+
+    html[data-theme='#{$key}'] & {
+      @content;
+    }
+  }
+}
+@function get($paramName, $curTheme: $curTheme, $themeConfig: $defaultTheme) {
+  @if map.has-key($map: map.get($themeConfig, $curTheme), $key: $paramName) == false {
+    @error "Theme `#{$curTheme}` param `#{$paramName}` not found.";
+  }
+  @return map.get($map: map.get($themeConfig, $curTheme), $key: $paramName);
+}
+
+@function _themeValue($colorOrThemeKey, $themeConfig: $defaultTheme) {
+  @if meta.type-of($colorOrThemeKey) == 'color' {
+    @return $colorOrThemeKey;
+  }
+
+  @return get($colorOrThemeKey, $curTheme, $themeConfig);
+}
+
+@function mix($value1, $value2, $ratio: 50%, $alpha: 1, $themeConfig: $defaultTheme) {
+  @return rgba(
+    color.mix(_themeValue($value1, $themeConfig), _themeValue($value2, $themeConfig), $ratio),
+    $alpha
+  );
+}

@@ -1,0 +1,17 @@
+import storageRef from './ref/storageRef';
+import { computed, watch } from 'vue';
+
+export const themeValue = storageRef('theme', 'auto', localStorage);
+export const themeValueList = ['auto', 'light', 'dark'];
+const matcher = window.matchMedia('(prefers-color-scheme: dark)');
+
+export const theme = computed(() => {
+  if (themeValue.value === 'auto') {
+    return matcher.matches ? 'dark' : 'light';
+  }
+  return themeValue.value;
+});
+function updateDomTheme() {
+  document.documentElement.dataset.theme = theme.value;
+}
+watch(theme, updateDomTheme, { immediate: true });

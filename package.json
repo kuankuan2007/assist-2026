@@ -1,0 +1,77 @@
+{
+  "name": "@kuankuan/assist-2026",
+  "version": "0.1.0",
+  "description": "A toolset from kuankuan",
+  "main": "dist/index.js",
+  "scripts": {
+    "lint": "eslint src/**/*",
+    "lint:fix": "eslint src/**/* --fix",
+    "clean": "node tools/clean-dist.mjs",
+    "build": "npm run clean && tsc"
+  },
+  "bin": {
+    "load-fontello": "bin/load-fontello.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kuankuan2007/assist-2026.git"
+  },
+  "homepage": "https://github.com/kuankuan2007/assist-2026",
+  "bugs": {
+    "url": "https://github.com/kuankuan2007/assist-2026/issues"
+  },
+  "author": "kuankuan",
+  "license": "MulanPSL-2.0",
+  "types": "dist/index.d.ts",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.3.5",
+    "esbuild": "^0.27.3",
+    "eslint": "^10.0.3",
+    "prettier": "^3.8.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1"
+  },
+  "files": [
+    "dist",
+    "src",
+    "styles",
+    "bin"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "type": "module",
+  "keywords": [
+    "kuankuan"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./src/*": {
+      "types": "./src/*.ts",
+      "import": "./src/*.ts",
+      "default": "./src/*.ts"
+    },
+    "./dist/*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "default": "./dist/*.js"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "default": "./dist/*.js"
+    },
+    "./styles/*": {
+      "import": "./styles/*"
+    }
+  },
+  "dependencies": {
+    "compressing": "^2.1.0",
+    "vue": "^3.0.0"
+  }
+}
