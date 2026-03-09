@@ -1,21 +1,36 @@
+#!/usr/bin/env node
 import fs from 'node:fs';
 import compressing from 'compressing';
 import os from 'node:os';
 import path from 'node:path';
 
-onsole.log('load-fontello v0.2.1');
+console.log('load-fontello v0.2.2');
 
 if (process.argv.length <= 2) {
   throw new Error('Please input fontello file path');
 }
 const zipPath = process.argv[2];
-const targetPath = process.argv[3] || path.join(process.cwd(), 'src/assets/fontello');
+const targetPath =
+  path.resolve(process.cwd(), process.argv[3]) || path.join(process.cwd(), 'src/assets/fontello');
 const uncompressDirPath = path.join(os.tmpdir(), 'fontello' + Math.random().toString());
+
+console.log(`
+Target path: ${targetPath}
+Source path: ${zipPath}
+Uncompress path: ${uncompressDirPath}
+`);
+
 const filePath = path.join(uncompressDirPath, path.basename(zipPath).replace('.zip', ''));
+
+if (!fs.existsSync(targetPath)) {
+  fs.mkdirSync(targetPath, { recursive: true });
+}
+if (!fs.existsSync(path.join(targetPath, 'font'))) {
+  fs.mkdirSync(path.join(targetPath, 'font'), { recursive: true });
+}
 
 compressing.zip.uncompress(zipPath, uncompressDirPath).then(
   () => {
-
     console.log('uncompress success');
     const id = Math.floor(Date.now() / 1000); // 防止缓存
 
