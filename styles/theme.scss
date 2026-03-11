@@ -4,8 +4,6 @@
 
 $defaultTheme: (
   light: (
-    link-color: rgb(0, 0, 130),
-    link-hover-color: rgb(0, 0, 69),
     color: #111111,
     background: #eeeeee,
     active-color: #0006c1,
@@ -14,8 +12,6 @@ $defaultTheme: (
     name: 'light',
   ),
   dark: (
-    link-color: rgb(90, 90, 255),
-    link-hover-color: rgb(146, 146, 255),
     color: #eeeeee,
     background: #1e1e1e,
     active-color: #686dff,
