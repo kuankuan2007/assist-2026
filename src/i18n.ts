@@ -1,24 +1,18 @@
-import { createI18n } from 'vue-i18n';
-import { computed, ref, watch, Ref } from 'vue';
-import messages, { langs } from 'virtual:k-i18n-config:main';
+import { createI18n, I18n } from 'vue-i18n';
+import { computed, ref, watch, type Ref } from 'vue';
 import storageRef from './ref/storageRef';
 
-export const languageName = {
-  _auto: computed(
-    (): string => `Auto (${languageName[browserLanguage.value as keyof typeof languageName]})`
-  ),
-  'zh-cn': '简体中文',
-  'en-us': 'English',
-};
-
-export const languageList = ['_auto', ...langs].map((i) => ({
-  id: i,
-  name: languageName[i as keyof typeof languageName],
-}));
-
-const LOCALSTORAGE_KEY = '_vue_i18n_main_locale';
 function getBrowserLanguage() {
-  const languages = (navigator?.languages || []).map((i) => i.toLowerCase());
+  return (navigator?.languages || [navigator.language]).map((i) => i.toLowerCase());
+}
+
+const browserLanguageSetting = ref<string[]>(getBrowserLanguage());
+window.addEventListener('languagechange', () => {
+  browserLanguageSetting.value = getBrowserLanguage();
+});
+
+function getBrowserLanguageInLangs(langs: string[]) {
+  const languages = browserLanguageSetting.value;
   const _langsOnly = langs.map((i: string) => i.split('-')[0]);
   for (const i of languages) {
     if (langs.includes(i)) {
@@ -30,40 +24,72 @@ function getBrowserLanguage() {
   }
   return langs[0] || 'en-us';
 }
-const browserLanguage = ref(getBrowserLanguage());
-export const localSettingLanguage = storageRef(LOCALSTORAGE_KEY, '_auto');
-if (localSettingLanguage.value !== '_auto' && !langs.includes(localSettingLanguage.value)) {
-  localSettingLanguage.value = '_auto';
-}
-export const language = computed({
-  get: () => {
-    const currentBrowserLanguage = browserLanguage.value;
-    if (localSettingLanguage.value === '_auto') {
-      return currentBrowserLanguage;
-    }
-    return localSettingLanguage.value;
-  },
-  set: (newValue) => {
-    localSettingLanguage.value = newValue;
-  },
-});
-watch(language, (value) => {
-  (i18n.global.locale as unknown as Ref<string>).value = value;
-});
 
-export const i18n = createI18n({
-  legacy: false,
-  locale: language.value,
-  fallbackLocale: 'en-us',
+export default class I18nInstance {
+  private readonly localSettingLanguage: Ref<string>;
+  private readonly browserLanguage: Ref<string>;
+
+  public readonly languageList: { name: Ref<string>; id: string }[];
+  public readonly language: Ref<string>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  messages: messages as any,
-});
-window.addEventListener('languagechange', () => {
-  browserLanguage.value = getBrowserLanguage();
-});
-export function t(key: string) {
-  return i18n.global.t(key);
-}
-export function tRef(key: string) {
-  return computed(() => i18n.global.t(key));
+  public readonly i18n: I18n<any, Record<string, unknown>, Record<string, unknown>, string, false>;
+
+  constructor(
+    public readonly messages: unknown,
+    public readonly langs: string[],
+    storageKey: string = '_vue_i18n_main_locale'
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const now = this;
+    this.languageList = ['_auto', ...langs].map((i) => ({
+      id: i,
+      name: this.languageName(i),
+    }));
+    this.localSettingLanguage = storageRef(storageKey, '_auto');
+    this.browserLanguage = computed(() => getBrowserLanguageInLangs(browserLanguageSetting.value));
+    watch(
+      () => now.localSettingLanguage.value,
+      (newValue) => {
+        if (newValue !== '_auto' && !now.langs.includes(newValue)) {
+          now.localSettingLanguage.value = '_auto';
+        }
+      }
+    );
+    this.language = computed({
+      get() {
+        const currentBrowserLanguage = now.browserLanguage.value;
+        if (now.localSettingLanguage.value === '_auto') {
+          return currentBrowserLanguage;
+        }
+        return now.localSettingLanguage.value;
+      },
+      set(newValue) {
+        now.localSettingLanguage.value = newValue;
+      },
+    });
+    this.i18n = createI18n({
+      legacy: false,
+      locale: this.language.value,
+      fallbackLocale: 'en-us',
+      messages: this.messages as never,
+    });
+    watch(
+      () => now.language.value,
+      (newValue) => {
+        now.i18n.global.locale.value = newValue;
+      }
+    );
+  }
+  t(key: string) {
+    return this.i18n.global.t(key);
+  }
+  tRef(key: string) {
+    return computed(() => this.t(key));
+  }
+  languageName(lan: string) {
+    if (lan === '_auto') {
+      return computed((): string => `Auto-${this.languageName(this.browserLanguage.value)}`);
+    }
+    return ref(new Intl.DisplayNames([lan], { type: 'language' }).of(lan) || lan);
+  }
 }
