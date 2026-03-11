@@ -30,13 +30,15 @@
     "eslint": "^10.0.3",
     "prettier": "^3.8.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.56.1"
+    "typescript-eslint": "^8.56.1",
+    "vite": "^7.3.1"
   },
   "files": [
     "dist",
     "src",
     "styles",
-    "bin"
+    "bin",
+    "types"
   ],
   "engines": {
     "node": ">=18.0.0"
@@ -72,8 +74,10 @@
   },
   "dependencies": {
     "compressing": ">=2.0.0",
-    "vite": ">=4.0.0",
     "vue": ">=3.0.0",
     "vue-i18n": ">=11.0.0"
+  },
+  "peerDependencies": {
+    "vite": ">=7.0.0"
   }
 }

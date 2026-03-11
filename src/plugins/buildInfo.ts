@@ -1,4 +1,4 @@
-import type { PluginOption } from 'vite';
+import type { Plugin } from 'vite';
 import child_process from 'child_process';
 import os from 'os';
 
@@ -30,7 +30,7 @@ async function getGitInfo() {
   };
 }
 
-export default function VitePluginBuildInfo(): PluginOption {
+export default function VitePluginBuildInfo(): Plugin {
   return {
     name: 'vite-plugin-build-info',
 
@@ -74,7 +74,8 @@ export default function VitePluginBuildInfo(): PluginOption {
               },
               {
                 title: 'Vite',
-                content: async () => res.meta.viteVersion,
+                content: async () =>
+                  (res.meta as unknown as { viteVersion?: string }).viteVersion || 'unknown',
                 url: 'https://vite.dev/',
               },
               {

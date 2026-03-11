@@ -1,4 +1,4 @@
-import type { PluginOption } from 'vite';
+import type { Plugin } from 'vite';
 import fs from 'fs';
 type I18nConfigItem = {
   [lang in string]: string;
@@ -45,11 +45,7 @@ function transformConfig(config: I18nConfig) {
   return result;
 }
 
-export default function VitePluginKI18nConfigLoad({
-  messages,
-}: {
-  messages: Record<string, string>;
-}): PluginOption {
+export default function VitePluginKI18nConfigLoad({ messages }: { messages: Record<string, string> }): Plugin {
   const configIds = Object.keys(messages).map((configId) => `virtual:k-i18n-config:${configId}`);
   const configPaths = Object.values(messages);
 
