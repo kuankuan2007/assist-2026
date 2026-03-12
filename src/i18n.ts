@@ -88,7 +88,7 @@ export default class I18nInstance {
   }
   languageName(lan: string) {
     if (lan === '_auto') {
-      return computed((): string => `Auto-${this.languageName(this.browserLanguage.value)}`);
+      return computed((): string => `Auto-${this.languageName(this.browserLanguage.value).value}`);
     }
     return ref(new Intl.DisplayNames([lan], { type: 'language' }).of(lan) || lan);
   }
