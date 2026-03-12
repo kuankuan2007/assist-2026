@@ -1,6 +1,6 @@
 {
   "name": "@kuankuan/assist-2026",
-  "version": "0.1.4-post.1",
+  "version": "0.1.5",
   "description": "A toolset from kuankuan",
   "main": "dist/index.js",
   "scripts": {
