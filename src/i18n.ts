@@ -24,7 +24,11 @@ function getBrowserLanguageInLangs(langs: string[]) {
   }
   return langs[0] || 'en-us';
 }
-
+const languageNameMapPreset = {
+  'zh-tw': '繁体中文',
+  'zh-cn': '简体中文',
+  'en-us': 'English',
+};
 export default class I18nInstance {
   private readonly localSettingLanguage: Ref<string>;
   private readonly browserLanguage: Ref<string>;
@@ -37,7 +41,8 @@ export default class I18nInstance {
   constructor(
     public readonly messages: unknown,
     public readonly langs: string[],
-    storageKey: string = '_vue_i18n_main_locale'
+    private readonly storageKey: string = '_vue_i18n_main_locale',
+    public readonly languageNameMap: Record<string, string> = languageNameMapPreset
   ) {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const now = this;
@@ -45,7 +50,7 @@ export default class I18nInstance {
       id: i,
       name: this.languageName(i),
     }));
-    this.localSettingLanguage = storageRef(storageKey, '_auto');
+    this.localSettingLanguage = storageRef(this.storageKey, '_auto');
     this.browserLanguage = computed(() => getBrowserLanguageInLangs(browserLanguageSetting.value));
     watch(
       () => now.localSettingLanguage.value,
@@ -89,6 +94,9 @@ export default class I18nInstance {
   languageName(lan: string) {
     if (lan === '_auto') {
       return computed((): string => `Auto-${this.languageName(this.browserLanguage.value).value}`);
+    }
+    if (lan in this.languageNameMap) {
+      return ref(this.languageNameMap[lan]);
     }
     return ref(new Intl.DisplayNames([lan], { type: 'language' }).of(lan) || lan);
   }
