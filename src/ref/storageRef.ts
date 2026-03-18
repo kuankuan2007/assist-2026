@@ -31,7 +31,7 @@ function defineRef(storage: Storage, key: string, refValue: Ref<string>) {
   return refValue;
 }
 
-export default function storageRef(
+export default function storageRef<T extends string=string>(
   key: string,
   defaultValue: string,
   storage: Storage = localStorage
@@ -39,7 +39,7 @@ export default function storageRef(
   return (
     getDefined(storage, key) ??
     defineRef(storage, key, ref<string>(storage.getItem(key) ?? defaultValue))
-  );
+  ) as Ref<T>;
 }
 window.addEventListener('storage', (e) => {
   if (e.key === null || e.newValue === null || e.storageArea === null) return;

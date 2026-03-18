@@ -22,13 +22,21 @@ $defaultTheme: (
 );
 
 $curTheme: 'light';
-@mixin use($themeConfig: $defaultTheme) {
+@mixin use($anythingElse: '', $themeConfig: $defaultTheme) {
   @each $key, $value in $themeConfig {
     $curTheme: $key !global;
 
-    html[data-theme='#{$key}'] & {
+    @include select($key, $anythingElse) {
       @content;
     }
+  }
+}
+@function selecter($theme){
+  @return "[data-theme='#{$theme}']";
+}
+@mixin select($theme, $anythingElse: '') {
+  html#{selecter($theme)}#{$anythingElse} & {
+    @content;
   }
 }
 @function get($paramName, $curTheme: $curTheme, $themeConfig: $defaultTheme) {

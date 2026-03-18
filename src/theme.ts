@@ -1,13 +1,25 @@
 import storageRef from './ref/storageRef';
+import mediaRef from './ref/mediaRef';
 import { computed, watch } from 'vue';
 
-export const themeValue = storageRef('theme', 'auto', localStorage);
-export const themeValueList = ['auto', 'light', 'dark'];
-const matcher = window.matchMedia('(prefers-color-scheme: dark)');
+export enum Theme {
+  Light = 'light',
+  Dark = 'dark',
+  Auto = 'auto',
+}
+
+export const themeValueList = [Theme.Auto, Theme.Light, Theme.Dark] as const;
+
+export const themeValue = storageRef<Theme>('theme', 'auto', localStorage);
+const matcherRef = mediaRef(window.matchMedia('(prefers-color-scheme: dark)'));
 
 export const theme = computed(() => {
-  if (themeValue.value === 'auto') {
-    return matcher.matches ? 'dark' : 'light';
+  const systemTheme = matcherRef.value ? Theme.Dark : Theme.Light;
+  if (!themeValueList.includes(themeValue.value)) {
+    themeValue.value = Theme.Auto;
+  }
+  if (themeValue.value === Theme.Auto) {
+    return systemTheme;
   }
   return themeValue.value;
 });

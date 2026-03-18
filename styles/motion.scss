@@ -1,0 +1,20 @@
+@mixin use($anythingElse: '') {
+  @include select('no-preference', $anythingElse) {
+    @content;
+  }
+}
+
+@mixin transition($transition...) {
+  @include use {
+    transition: $transition;
+    @content;
+  }
+}
+@function selecter($motion){
+  @return "[data-motion='#{$motion}']";
+}
+@mixin select($motion, $anythingElse: '') {
+  html#{selecter($motion)}#{$anythingElse} & {
+    @content;
+  }
+}
