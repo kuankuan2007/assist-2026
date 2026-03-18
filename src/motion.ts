@@ -10,13 +10,13 @@ export enum Motions {
 
 export const motionValueList = [Motions.Auto, Motions.NoPreference, Motions.Reduce] as const;
 
-export const motionValue = storageRef<Motions>('_k_motion', Motions.NoPreference, localStorage);
+export const motionValue = storageRef<Motions>('_k_motion', Motions.Auto, localStorage);
 const matcherRef = mediaRef(window.matchMedia('(prefers-reduced-motion: reduce)'));
 
 export const motion = computed(() => {
   const systemMotion = matcherRef.value ? Motions.Reduce : Motions.NoPreference;
     if (!motionValueList.includes(motionValue.value)) {
-      motionValue.value = Motions.NoPreference;
+      motionValue.value = Motions.Auto;
     }
   if (motionValue.value === Motions.Auto) {
     return systemMotion;
