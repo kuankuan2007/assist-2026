@@ -79,6 +79,5 @@
   },
   "peerDependencies": {
     "vite": ">=7.0.0"
-  },
-  "sideEffects": false
+  }
 }
