@@ -70,7 +70,6 @@ export default class I18nInstance {
         now.localSettingLanguage.value = newValue;
       },
     });
-    console.log(this.language.value);
     this.i18n = createI18n({
       legacy: false,
       locale: this.language.value,
