@@ -52,19 +52,14 @@ export default class I18nInstance {
     }));
     this.localSettingLanguage = storageRef(this.storageKey, '_auto');
     this.browserLanguage = computed(() => getBrowserLanguageInLangs(browserLanguageSetting.value));
-    watch(
-      () => now.localSettingLanguage.value,
-      (newValue) => {
-        if (newValue !== '_auto' && !now.langs.includes(newValue)) {
-          now.localSettingLanguage.value = '_auto';
-        }
-      }
-    );
     this.language = computed({
       get() {
         const currentBrowserLanguage = now.browserLanguage.value;
         if (now.localSettingLanguage.value === '_auto') {
           return currentBrowserLanguage;
+        }
+        if (!now.langs.includes(now.localSettingLanguage.value)) {
+          now.localSettingLanguage.value = '_auto';
         }
         return now.localSettingLanguage.value;
       },
