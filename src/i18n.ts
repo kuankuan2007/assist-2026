@@ -55,11 +55,14 @@ export default class I18nInstance {
     this.language = computed({
       get() {
         const currentBrowserLanguage = now.browserLanguage.value;
+        if (
+          now.localSettingLanguage.value !== '_auto' &&
+          !now.langs.includes(now.localSettingLanguage.value)
+        ) {
+          now.localSettingLanguage.value = '_auto';
+        }
         if (now.localSettingLanguage.value === '_auto') {
           return currentBrowserLanguage;
-        }
-        if (!now.langs.includes(now.localSettingLanguage.value)) {
-          now.localSettingLanguage.value = '_auto';
         }
         return now.localSettingLanguage.value;
       },
@@ -67,6 +70,7 @@ export default class I18nInstance {
         now.localSettingLanguage.value = newValue;
       },
     });
+    console.log(this.language.value);
     this.i18n = createI18n({
       legacy: false,
       locale: this.language.value,
