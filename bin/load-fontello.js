@@ -4,14 +4,15 @@ import compressing from 'compressing';
 import os from 'node:os';
 import path from 'node:path';
 
-console.log('load-fontello v0.2.2');
+console.log('load-fontello v0.2.3');
 
 if (process.argv.length <= 2) {
   throw new Error('Please input fontello file path');
 }
 const zipPath = process.argv[2];
-const targetPath =
-  path.resolve(process.cwd(), process.argv[3]) || path.join(process.cwd(), 'src/assets/fontello');
+const targetPath = process.argv[3]
+  ? path.resolve(process.cwd(), process.argv[3])
+  : path.join(process.cwd(), 'src/assets/fontello');
 const uncompressDirPath = path.join(os.tmpdir(), 'fontello' + Math.random().toString());
 
 console.log(`
