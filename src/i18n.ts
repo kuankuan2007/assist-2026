@@ -1,5 +1,5 @@
 import { createI18n, I18n } from 'vue-i18n';
-import { computed, ref, watch, type Ref } from 'vue';
+import { computed, readonly, ref, watch, type Ref } from 'vue';
 import storageRef from './ref/storageRef';
 
 function getBrowserLanguage() {
@@ -37,6 +37,7 @@ export default class I18nInstance {
   public readonly language: Ref<string>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public readonly i18n: I18n<any, Record<string, unknown>, Record<string, unknown>, string, false>;
+  public readonly settingLanguage: Ref<string>;
 
   constructor(
     public readonly messages: unknown,
@@ -51,6 +52,7 @@ export default class I18nInstance {
       name: this.languageName(i),
     }));
     this.localSettingLanguage = storageRef(this.storageKey, '_auto');
+    this.settingLanguage = readonly(this.localSettingLanguage);
     this.browserLanguage = computed(() => getBrowserLanguageInLangs(browserLanguageSetting.value));
     this.language = computed({
       get() {
