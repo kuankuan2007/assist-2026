@@ -10,7 +10,8 @@
     "build": "npm run clean && tsc"
   },
   "bin": {
-    "load-fontello": "bin/load-fontello.js"
+    "load-fontello": "bin/load-fontello.js",
+    "clear-vite-deps": "bin/clear-vite-deps.js"
   },
   "repository": {
     "type": "git",
