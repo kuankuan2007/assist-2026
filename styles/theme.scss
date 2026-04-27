@@ -22,16 +22,25 @@ $defaultTheme: (
 );
 
 $curTheme: 'light';
+$printTheme: 'light';
 @mixin use($anythingElse: '', $themeConfig: $defaultTheme) {
-  @each $key, $value in $themeConfig {
-    $curTheme: $key !global;
+  @media screen {
+    @each $key, $value in $themeConfig {
+      $curTheme: $key !global;
 
-    @include select($key, $anythingElse) {
+      @include select($key, $anythingElse) {
+        @content;
+      }
+    }
+  }
+  @media print {
+    $curTheme: $printTheme !global;
+    @include select($printTheme, $anythingElse) {
       @content;
     }
   }
 }
-@function selecter($theme){
+@function selecter($theme) {
   @return "[data-theme='#{$theme}']";
 }
 @mixin select($theme, $anythingElse: '') {

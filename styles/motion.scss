@@ -1,6 +1,8 @@
 @mixin use($anythingElse: '') {
-  @include select('no-preference', $anythingElse) {
-    @content;
+  @media screen {
+    @include select('no-preference', $anythingElse) {
+      @content;
+    }
   }
 }
 
