@@ -12,4 +12,4 @@ export let copyText = (text: string) => {
     };
   }
   copyText(text);
-}
+};
