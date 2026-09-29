@@ -35,7 +35,7 @@ $printTheme: 'light';
   }
   @media print {
     $curTheme: $printTheme !global;
-    @include select($printTheme, $anythingElse) {
+    html[data-theme] & {
       @content;
     }
   }
