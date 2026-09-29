@@ -80,5 +80,6 @@
   },
   "peerDependencies": {
     "vite": ">=7.0.0"
-  }
+  },
+  "packageManager": "pnpm@12.8.1"
 }
