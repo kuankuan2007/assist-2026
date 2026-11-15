@@ -1,14 +1,9 @@
-import storageRef from './ref/storageRef';
-import mediaRef from './ref/mediaRef';
+import storageRef from '../ref/storageRef';
+import mediaRef from '../ref/mediaRef';
 import { computed, watch } from 'vue';
+import { Theme, themeValueList } from './define';
 
-export enum Theme {
-  Light = 'light',
-  Dark = 'dark',
-  Auto = 'auto',
-}
-
-export const themeValueList = [Theme.Auto, Theme.Light, Theme.Dark] as const;
+export { Theme, themeValueList };
 
 export const themeValue = storageRef<Theme>('theme', 'auto', localStorage);
 const matcherRef = mediaRef(window.matchMedia('(prefers-color-scheme: dark)'));
