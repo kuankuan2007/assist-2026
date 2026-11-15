@@ -1,5 +1,7 @@
 import type { Plugin } from 'vite';
 import child_process from 'child_process';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import os from 'os';
 
 const MODULE_ID = 'visual:k-build-info';
@@ -30,7 +32,11 @@ async function getGitInfo() {
   };
 }
 
-export default function VitePluginBuildInfo(): Plugin {
+export default function VitePluginBuildInfo(
+  usingSsg: boolean = false,
+  isSSG: boolean = false
+): Plugin {
+  const buildTime = Number((process.env.SCALE_BUILD_TIME ??= String(Date.now())));
   return {
     name: 'vite-plugin-build-info',
 
@@ -41,8 +47,18 @@ export default function VitePluginBuildInfo(): Plugin {
     },
     async load(id) {
       if (id === '\0' + MODULE_ID) {
+        const ssgInfo = usingSsg
+          ? {
+              isSSG,
+              viteSsgVersion: (
+                JSON.parse(
+                  readFileSync(resolve(process.cwd(), 'node_modules/vite-ssg/package.json'), 'utf8')
+                ) as { version: string }
+              ).version,
+            }
+          : {};
         const res = {
-          buildTime: Date.now(),
+          buildTime,
           meta: this.meta,
           mode: this.environment.mode,
           git: await getGitInfo(),
@@ -52,7 +68,21 @@ export default function VitePluginBuildInfo(): Plugin {
             arch: os.arch(),
             node: process.version,
           },
+          ...ssgInfo,
         };
+        const ssgShowInfo = usingSsg
+          ? [
+              {
+                title: 'SSG 渲染',
+                content: async () => (res.isSSG ? '是' : '否'),
+              },
+              {
+                title: 'vite-ssg',
+                content: async () => res.viteSsgVersion,
+                url: 'https://github.com/antfu-collective/vite-ssg',
+              },
+            ]
+          : [];
         const showRes = await Promise.all(
           (
             [
@@ -64,6 +94,7 @@ export default function VitePluginBuildInfo(): Plugin {
                 title: '环境',
                 content: async () => res.mode.toUpperCase(),
               },
+              ...ssgShowInfo,
               {
                 title: '分支',
                 content: async () => res.git.branch,
@@ -74,8 +105,7 @@ export default function VitePluginBuildInfo(): Plugin {
               },
               {
                 title: 'Vite',
-                content: async () =>
-                  (res.meta as unknown as { viteVersion?: string }).viteVersion || 'unknown',
+                content: async () => res.meta.viteVersion,
                 url: 'https://vite.dev/',
               },
               {
